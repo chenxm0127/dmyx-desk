@@ -174,12 +174,12 @@ const Combination: React.FC = () => {
 
   const startCameraCapture = (deviceId: string) => {
     if (VideoSourceType.VideoSourceCameraPrimary === _getVideoSourceTypeCamera(deviceId)) {
-      engine.current?.startPrimaryCameraCapture({
+      engine.current?.startCameraCapture(VideoSourceType.VideoSourceCameraPrimary,{
         deviceId,
       })
     }
     if (VideoSourceType.VideoSourceCameraSecondary === _getVideoSourceTypeCamera(deviceId)) {
-      engine.current?.startSecondaryCameraCapture({
+      engine.current?.startCameraCapture(VideoSourceType.VideoSourceCameraSecondary,{
         deviceId,
       })
     }
@@ -187,10 +187,10 @@ const Combination: React.FC = () => {
 
   const stopCameraCapture = (deviceId: string) => {
     if (VideoSourceType.VideoSourceCameraPrimary === _getVideoSourceTypeCamera(deviceId)) {
-      engine.current?.stopPrimaryCameraCapture()
+      engine.current?.stopCameraCapture(VideoSourceType.VideoSourceCameraPrimary)
     }
     if (VideoSourceType.VideoSourceCameraSecondary === _getVideoSourceTypeCamera(deviceId)) {
-      engine.current?.stopSecondaryCameraCapture()
+      engine.current?.stopCameraCapture(VideoSourceType.VideoSourceCameraSecondary)
     }
   }
 
@@ -300,30 +300,30 @@ const Combination: React.FC = () => {
     const streams: TranscodingVideoStream[] = []
     if (videoDeviceId?.length) {
       streams.push({
-        sourceType: MediaSourceType.PrimaryCameraSource
+        sourceType: VideoSourceType.VideoSourceCameraPrimary
       })
     }
     if (openPlayer) {
       streams.push({
-        sourceType: MediaSourceType.MediaPlayerSource,
+        sourceType: VideoSourceType.VideoSourceMediaPlayer,
         imageUrl: player.current?.getMediaPlayerId().toString(),
       });
     }
     streams.push({
-      sourceType: MediaSourceType.RtcImageJpegSource,
+      sourceType: VideoSourceType.VideoSourceRtcImageJpeg,
       imageUrl: test1Url,
     })
     streams.push({
-      sourceType: MediaSourceType.RtcImageJpegSource,
+      sourceType: VideoSourceType.VideoSourceRtcImageJpeg,
       imageUrl: test2Url,
     })
     streams.push({
-      sourceType: MediaSourceType.RtcImageGifSource,
+      sourceType: VideoSourceType.VideoSourceRtcImageGif,
       imageUrl: testGif,
     })
     if (isScreenCapture) {
       streams.push({
-        sourceType: MediaSourceType.PrimaryScreenSource,
+        sourceType: VideoSourceType.VideoSourceScreenPrimary,
       });
     }
 

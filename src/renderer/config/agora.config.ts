@@ -8,6 +8,7 @@ const config = {
   channelId: 'testdcg',
   uid: 0,
   pluginPath: '',
+  logFilePath: '/logs/agorasdkFile.log',
   SDKLogPath: './logs/agorasdk.log',
 };
 
