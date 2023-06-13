@@ -6,7 +6,6 @@ import {
   RenderModeType,
   VideoMirrorModeType,
   VideoSourceType,
-  MediaSourceType,
   MediaPlayerState,
   MediaPlayerError,
   ChannelProfileType,
@@ -20,12 +19,8 @@ import {
   RtcStats
 } from 'agora-electron-sdk'
 import {
-  AgoraButton,
-  AgoraDivider,
   AgoraDropdown,
   AgoraImage,
-  AgoraText,
-  AgoraTextInput,
 } from '../../components/ui';
 import { getResourcePath } from '../../utils/index'
 import SelectBox from '../../components/SelectBox'
