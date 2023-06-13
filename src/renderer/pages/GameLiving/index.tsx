@@ -20,9 +20,10 @@ import apiClient from '../../utils/request'
 
 const defaultConfig= {
   appId: '0411799bd126418c9ea73cb37f2c40b4',
-  userId: 1101,
-  userName: '我是大主播',
-  channelName: 'dmyx',
+  userId: 1001,
+  openId: 'opid001',
+  userName: '游戏主播1',
+  channelName: 'gameroom1',
   gameScreenX: 1920,
   gameScreenY: 1080,
   gameScreenFPS: 30,
@@ -64,11 +65,6 @@ const GameLivingPage : React.FC = () => {
     initRtm()
     registerIpcEvent()
     checkAppInstall(appName)
-    /*
-    setTimeout(() => {
-      updateVideoSize(metaRef.current)
-    },2500)
-    */   
     return () => {
       console.log('unmonut component')
       engine.current.release()
@@ -375,25 +371,6 @@ const GameLivingPage : React.FC = () => {
     engine.current.leaveChannel()
   }
 
-  const updateVideoSize = (parentDom) => {
-    const divDom = parentDom.querySelector('div')
-    if (divDom) {
-      divDom.style.position = 'relative'
-    }
-    console.log('----updateVideoSize divDom: ',divDom)
-    const canvasDom = parentDom.querySelector('canvas')
-    console.log('----updateVideoSize canvasDom: ',canvasDom)
-    if (canvasDom) {
-      canvasDom.style.position = 'absolute'
-      canvasDom.style.top = 0
-      canvasDom.style.left = 0
-      canvasDom.style.right = 0
-      canvasDom.style.bottom = 0
-      canvasDom.style.width = '100%'
-      canvasDom.style.height = '100%'
-    }
-  }
-
   const handleOnInputChange = debounce((id, value) => {
     console.log('----event: ',value)
     console.log('----event id: ',id)
@@ -463,11 +440,10 @@ const GameLivingPage : React.FC = () => {
   const handleOnOptBtnClick = (e) => {
     console.log('-----handleOnOptBtnClick e: ',e.target.id)
     let msg = '', msg_type = '', giftid = '',giftvalue = 0
-    let messageId = generateRandomNumber()
     let baseConfig = {
-      msgid: messageId,
-      userid: appConfig.userId,
-      avatarurl: 'test url',
+      roomid: appConfig.channelName,
+      openid: appConfig.openId,
+      avatar_url: '',
       nickname: appConfig.userName
     }
     let reqConfig
@@ -486,9 +462,8 @@ const GameLivingPage : React.FC = () => {
         reqConfig = {
           ...baseConfig,
           msg_type: 'live_gift',
-          giftnum: awardInfo.rose,
-          giftid: '1001',
-          giftvalue: 10
+          gift_num: awardInfo.rose,
+          gift_id: '1001',
         }
         break
       }
@@ -497,9 +472,8 @@ const GameLivingPage : React.FC = () => {
         reqConfig = {
           ...baseConfig,
           msg_type: 'live_gift',
-          giftnum: awardInfo.bomb,
-          giftid: '1002',
-          giftvalue: 50
+          gift_num: awardInfo.bomb,
+          gift_id: '1002',
         }
         break
       }
@@ -508,14 +482,14 @@ const GameLivingPage : React.FC = () => {
         reqConfig = {
           ...baseConfig,
           msg_type: 'live_gift',
-          giftnum: awardInfo.rocket,
-          giftid: '1003',
-          giftvalue: 1000
+          gift_num: awardInfo.rocket,
+          gift_id: '1003'
         }
         break
       }
     }
     console.log('----request config: ', reqConfig)
+    
     apiClient.post('live_data/living/message', reqConfig).then(response => {
       console.log(response.data)
     }).catch(err => {
@@ -567,11 +541,11 @@ const GameLivingPage : React.FC = () => {
     if (inputMsg.trim() !== '') {
       console.log('----sendMsg: ',inputMsg)
       let reqConfig = {
-        msgid: generateRandomNumber(),
-        userid: appConfig.userId,
-        avatarurl: 'test url',
+        roomid: appConfig.channelName,
+        openid: appConfig.openId,
+        avatar_url: '',
         nickname: appConfig.userName,
-        msg_type: 'live_comment',
+        msg_type: "live_comment",
         content: inputMsg
       }
       console.log('----request config: ', reqConfig)
