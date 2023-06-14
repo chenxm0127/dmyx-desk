@@ -87,7 +87,7 @@ const GameLivingPage : React.FC = () => {
     try {
       RTM.current.init(appConfig.appId)
       registerRtmEvent()
-      await RTM.current.login(appConfig.userId.toString(), '')
+      //await RTM.current.login(appConfig.userId.toString(), '')
     } catch(e) {
       console.error('init rtm failed. error: ',e)
     }
@@ -182,6 +182,13 @@ const GameLivingPage : React.FC = () => {
   }
 
   const updateRemoteScreenVideo = (remoteUid: number) => {
+    engine.current.setupRemoteVideo({
+      sourceType: VideoSourceType.VideoSourceRemote,
+      view: null,
+      uid: remoteUid,
+      mirrorMode: VideoMirrorModeType.VideoMirrorModeDisabled,
+      renderMode: RenderModeType.RenderModeFit,
+    });
     try {
       engine.current.destroyRendererByView(visterRef.current);
     } catch (e) {
@@ -189,7 +196,7 @@ const GameLivingPage : React.FC = () => {
     }
     let ret = engine.current.setupRemoteVideo({
       sourceType: VideoSourceType.VideoSourceRemote,
-      view: visterRef.current,
+      view: gameRef.current,
       uid: remoteUid,
       mirrorMode: VideoMirrorModeType.VideoMirrorModeDisabled,
       renderMode: RenderModeType.RenderModeFit,
@@ -240,12 +247,23 @@ const GameLivingPage : React.FC = () => {
     console.log('----ret: ',ret)
   }
 
+  const stopGameScreenVideo = () => {
+    let ret = engine.current.setupLocalVideo({
+      sourceType: VideoSourceType.VideoSourceScreen,
+      view: null,
+      uid: appConfig.userId,
+      mirrorMode: VideoMirrorModeType.VideoMirrorModeDisabled,
+      renderMode: RenderModeType.RenderModeFit,
+    });
+    console.log('----ret: ',ret)
+  }
+
   const startScreenCapture = () => {
     let sources = engine.current?.getScreenCaptureSources({width: 1920, height: 1080},{width: 64, height: 64},true)
     console.log('-----startScreenCapture sources: ',sources)
     let gameSource = sources.find((item) => {
-      //return item.sourceName === 'QQ'
-      return item.sourceName === 'pangkezhengba_agora'
+      return item.sourceName === 'QQ'
+      //return item.sourceName === 'pangkezhengba_agora'
     })
     if (!gameSource) {
       console.error(`targetSource is invalid`);
@@ -340,6 +358,7 @@ const GameLivingPage : React.FC = () => {
       return
     }
     try {
+      await RTM.current.login(appConfig.userId.toString(), '')
       await RTM.current.joinChannel(appConfig.channelName)
       RTM.current.setJoinChannelState(appConfig.channelName,true)
     } catch(error) {
@@ -355,12 +374,14 @@ const GameLivingPage : React.FC = () => {
     try {
       await RTM.current.leaveChannel(appConfig.channelName)
       RTM.current.setJoinChannelState(appConfig.channelName,false)
+      await RTM.current.logout()
+
     } catch(error) {
       console.log('join rtm channel fialed! error is: ',error)
     }
   }
 
-  const joinChannel = () => {
+  const joinChannel = async () => {
     if (!appConfig.channelName) {
       console.error('channelId is invalid');
       return
@@ -387,7 +408,7 @@ const GameLivingPage : React.FC = () => {
     })
   }
 
-  const leaveChannel = () => {
+  const leaveChannel = async () => {
     console.log('------leaveChannel')
     engine.current.leaveChannel()
   }
@@ -441,11 +462,14 @@ const GameLivingPage : React.FC = () => {
       isCapture = startScreenCapture()
       if (isCapture) {
         updateGameScreenVideo()
+        setIsGameShow(true)
       }
     } else {
       stopScreenCapture()
+      stopGameScreenVideo()
+      setIsGameShow(false)
     }
-    setIsGameShow((preState) => !preState)
+    //setIsGameShow((preState) => !preState)
   }
   
   const scrollToBottom = () => {
@@ -631,7 +655,7 @@ const GameLivingPage : React.FC = () => {
         <p style={{fontSize: '16px',paddingLeft:'4px'}}>玩法</p>
         <div style={{display:'flex',justifyContent:'space-between'}}>
           <span style={{marginLeft: '12px'}}>萌萌宠之战</span>
-          <button  style={{width: '35%',marginRight:'4px'}} onClick={handleMethodClick}>{isGameShow ? '结束' : '开始'}</button>
+          <button disabled={startVisit} style={{width: '35%',marginRight:'4px'}} onClick={handleMethodClick}>{isGameShow ? '结束' : '开始'}</button>
         </div>
       </>
     )
@@ -643,32 +667,32 @@ const GameLivingPage : React.FC = () => {
         <div className={styles.optBtnWapper}>
           <div>
             <div className={styles.btnWapper}>
-              <button disabled={!startLiving} id='dianzanBtn' onClick={handleOnOptBtnClick}>点赞</button>
+              <button disabled={!startLiving && !startVisit} id='dianzanBtn' onClick={handleOnOptBtnClick}>点赞</button>
               <span>x</span>
-              <input disabled={!startLiving} id='dianzan' onChange={(e) => handleOptmsgInputChange(e.target.id, e.target.value)} value={awardInfo.dianzan} />
+              <input disabled={!startLiving && !startVisit} id='dianzan' onChange={(e) => handleOptmsgInputChange(e.target.id, e.target.value)} value={awardInfo.dianzan} />
             </div>
           </div>
           <div style={{display: 'flex', flexDirection:'column'}}>
             <div className={styles.btnWapper}>
-              <button disabled={!startLiving} id='roseBtn' onClick={handleOnOptBtnClick}>玫瑰10币</button>
+              <button disabled={!startLiving && !startVisit} id='roseBtn' onClick={handleOnOptBtnClick}>玫瑰10币</button>
               <span>x</span>
-              <input disabled={!startLiving} id='rose' onChange={(e) => handleOptmsgInputChange(e.target.id, e.target.value)} value={awardInfo.rose} />
+              <input disabled={!startLiving && !startVisit} id='rose' onChange={(e) => handleOptmsgInputChange(e.target.id, e.target.value)} value={awardInfo.rose} />
             </div>
             <div className={styles.btnWapper}>
-              <button disabled={!startLiving} id='bombBtn' onClick={handleOnOptBtnClick}>炸弹50币</button>
+              <button disabled={!startLiving && !startVisit} id='bombBtn' onClick={handleOnOptBtnClick}>炸弹50币</button>
               <span>x</span>
-              <input disabled={!startLiving} id='bomb' onChange={(e) => handleOptmsgInputChange(e.target.id, e.target.value)} value={awardInfo.bomb} />
+              <input disabled={!startLiving && !startVisit} id='bomb' onChange={(e) => handleOptmsgInputChange(e.target.id, e.target.value)} value={awardInfo.bomb} />
             </div>
             <div className={styles.btnWapper}>
-              <button disabled={!startLiving} id='rocketBtn' onClick={handleOnOptBtnClick}>火箭1000币</button>
+              <button disabled={!startLiving && !startVisit} id='rocketBtn' onClick={handleOnOptBtnClick}>火箭1000币</button>
               <span>x</span>
-              <input disabled={!startLiving} id='rocket' onChange={(e) => handleOptmsgInputChange(e.target.id, e.target.value)} value={awardInfo.rocket} />
+              <input disabled={!startLiving && !startVisit} id='rocket' onChange={(e) => handleOptmsgInputChange(e.target.id, e.target.value)} value={awardInfo.rocket} />
             </div>
           </div>
         </div>
         <div className={styles.msgSend}>
-          <input disabled={!startLiving} type="text" maxLength={200} onChange={handleInputMsgChange} placeholder='说点什么...' value={inputMsg}/>
-          <button disabled={!startLiving} onClick={sendMsg}>发送</button>
+          <input disabled={!startLiving && !startVisit} type="text" maxLength={200} onChange={handleInputMsgChange} placeholder='说点什么...' value={inputMsg}/>
+          <button disabled={!startLiving && !startVisit} onClick={sendMsg}>发送</button>
         </div>
       </>
     )
