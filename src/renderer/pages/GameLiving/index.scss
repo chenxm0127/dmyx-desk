@@ -6,7 +6,7 @@
   background-color: rgb(255, 255, 255);
   .main {
     display: flex;
-    flex: 4;
+    height: 75%;
     .mainLeft {
       display: flex;
       flex: 3;
@@ -80,7 +80,8 @@
   .gameMessage {
     display: flex;
     flex: 1;
-    margin-top: 5px;
+    justify-content: center;
+    align-items: center;
     .msgOpt {
       flex: 3;
       margin-right: 12px;

@@ -48,15 +48,16 @@ let mainWindow;
 
 function createMainWindow() {
   const window = new BrowserWindow({
-    width: 1024,
-    height: 768,
+    width: 1280,
+    height: 720,
+    autoHideMenuBar:true,
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
       webSecurity: false,
     },
   });
-  window.setMinimumSize(1024,768)
+  window.setMinimumSize(1280,720)
   window.webContents.openDevTools({
     mode: 'detach',
     activate: true,

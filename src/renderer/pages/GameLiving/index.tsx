@@ -17,6 +17,7 @@ import RtmClient from '../../utils/rtm-client'
 import { checkAppInstall, startApp, checkAppInfoEvent, startAppInfoEvent} from '../../utils/ipcRenderEvent'
 import Config from '../../config/agora.config'
 import apiClient from '../../utils/request'
+import { message } from 'antd'
 
 const defaultConfig= {
   appId: '0411799bd126418c9ea73cb37f2c40b4',
@@ -49,7 +50,7 @@ const GameLivingPage : React.FC = () => {
   const [startLiving, setStartLiving] = useState(false)
   const [awardInfo, setAwardInfo] = useState({ dianzan: 5,rose: 1,bomb: 1,rocket: 1 })
   const [inputMsg, setInputMsg] = useState<string>('')
-  const [isAppExist, setIsAppExist] = useState(false)
+  const [isAppExist, setIsAppExist] = useState(true)
   const isAppStart = useRef(false)
   const gameRef = useRef(null)
   const metaRef = useRef(null)
@@ -58,13 +59,13 @@ const GameLivingPage : React.FC = () => {
   const visitor = useRef(undefined)
   const engine = useRef(createAgoraRtcEngine())
   const RTM = useRef(new RtmClient())
-  const appName = 'QQ'
+  const appName = 'pangkezhengba_agora'
 
   useEffect(() => {
     initEngine()
     initRtm()
     registerIpcEvent()
-    checkAppInstall(appName)
+    //checkAppInstall(appName)
     return () => {
       console.log('unmonut component')
       engine.current.release()
@@ -151,6 +152,7 @@ const GameLivingPage : React.FC = () => {
 
   const checkAppInstallCallBack = (eventInfo) => {
     console.log('-----checkAppInstallCallBack: ', eventInfo)
+    return true
     if (eventInfo === true) {
       setIsAppExist(true)
     } else {
@@ -225,14 +227,15 @@ const GameLivingPage : React.FC = () => {
     console.log('-----startScreenCapture sources: ',sources)
     let gameSource = sources.find((item) => {
       //return item.sourceName === 'zFuse'
-      return item.sourceName === 'QQ'
+      return item.sourceName === 'pangkezhengba_agora'
     })
     if (!gameSource) {
       console.error(`targetSource is invalid`);
+      message.info('该应用程序未打开，请安装并打开该应用程序')
       return false
     }
     console.log('------22222 gameSource: ',gameSource)
-    engine.current?.startScreenCaptureByWindowId(
+    let ret = engine.current?.startScreenCaptureByWindowId(
       gameSource.sourceId,
       { width: 0, height: 0, x: 0, y: 0 },
       {
@@ -245,6 +248,7 @@ const GameLivingPage : React.FC = () => {
         excludeWindowCount: 0,
       }
     )
+    console.log('ret: ',ret)
     return true
   }
 
@@ -414,20 +418,25 @@ const GameLivingPage : React.FC = () => {
 
   const handleMethodClick = (e) => {
     console.log('-----handleStartClick isGameShow: ',isGameShow)
+    let isCapture = false
     if (!isGameShow) {
       if (!isAppStart.current) {
-        startApp('QQ')
+        //startApp('QQ')
+        isCapture = startScreenCapture()
+        updateGameScreenVideo() 
       } else {
-        let isCapture = startScreenCapture()
+        isCapture = startScreenCapture()
+        updateGameScreenVideo() 
         if (isCapture) {
           updateGameScreenVideo() 
         } else {
-          startApp('QQ')
+          //startApp('QQ')
         }
       }
     } else {
       stopScreenCapture()
     }
+    
     setIsGameShow((preState) => !preState)
   }
   
@@ -573,7 +582,7 @@ const GameLivingPage : React.FC = () => {
   const renderConfig = () => {
     return (
       <>
-        <p style={{fontSize: '16px',paddingLeft:'4px'}}>应用配置</p>
+        <p style={{fontSize: '16px',paddingLeft:'4px',marginBottom:'4px'}}>应用配置</p>
         <div style={{display:'flex', flexDirection:'column',height:'80%'}}>
           {
             Object.keys(appConfig).map((key,index) => {
@@ -595,7 +604,7 @@ const GameLivingPage : React.FC = () => {
         <p style={{fontSize: '16px',paddingLeft:'4px'}}>玩法</p>
         <div style={{display:'flex',justifyContent:'space-between'}}>
           <span style={{marginLeft: '12px'}}>萌萌宠之战</span>
-          <button disabled={!isAppExist} style={{width: '35%',marginRight:'4px'}} onClick={handleMethodClick}>{isGameShow ? '结束' : '开始'}</button>
+          <button  style={{width: '35%',marginRight:'4px'}} onClick={handleMethodClick}>{isGameShow ? '结束' : '开始'}</button>
         </div>
       </>
     )
