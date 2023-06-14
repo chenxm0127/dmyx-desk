@@ -48,6 +48,7 @@ const GameLivingPage : React.FC = () => {
   const [globalDisable, setGlobalDisable] = useState(true)
   const [isGameShow, setIsGameShow] = useState(false)
   const [startLiving, setStartLiving] = useState(false)
+  const [startVisit, setStartVisit] = useState(false)
   const [awardInfo, setAwardInfo] = useState({ dianzan: 5,rose: 1,bomb: 1,rocket: 1 })
   const [inputMsg, setInputMsg] = useState<string>('')
   const [isAppExist, setIsAppExist] = useState(true)
@@ -364,7 +365,8 @@ const GameLivingPage : React.FC = () => {
     engine.current.joinChannel(token, appConfig.channelName, appConfig.userId, {
       // Make myself as the broadcaster to send stream to remote
       clientRoleType: ClientRoleType.ClientRoleBroadcaster,
-      publishMicrophoneTrack: false,
+      publishMicrophoneTrack: true,
+      publishMediaPlayerAudioTrack: true,
       publishCameraTrack: false,
       publishScreenTrack: true,
     })
@@ -405,6 +407,7 @@ const GameLivingPage : React.FC = () => {
       case 'userName':
       case 'channelName':
       case 'userId':
+      case 'openId':
         {
           let newAppConfig = {
             ...appConfig,
@@ -542,6 +545,16 @@ const GameLivingPage : React.FC = () => {
     }
   }
 
+  const handleVisitor = (e) => {
+    console.log('-----handleVisitor handleVisitor: ',startVisit)
+    if (!startVisit) {
+      console.log('kaishi')
+    } else {
+      console.log('jieshu ')
+    }
+    setStartVisit(!startVisit)
+  }
+
   const sendRtmMessage = async (msg) => {
     await RTM.current.sendChannelMessage(msg, appConfig.channelName)
   }
@@ -657,6 +670,7 @@ const GameLivingPage : React.FC = () => {
           {(globalDisable || personList.length>0)&&(<div className={styles.meta} ref={visterRef}>{personList.length>0 ? '':'房间主播预览'}</div>)}
         </div>
         <div className={styles.livingWapper}>
+          <button onClick={handleVisitor}>{startVisit? '结束观看':'开始观看'}</button>
           <button onClick={handleLivingClick}>{startLiving? '结束直播':'开始直播'}</button>
         </div>
       </>
