@@ -63,6 +63,7 @@ const GameLivingPage : React.FC = () => {
   const appName = 'pangkezhengba_agora'
 
   useEffect(() => {
+    console.log('dddddd')
     initEngine()
     initRtm()
     registerIpcEvent()
@@ -74,6 +75,7 @@ const GameLivingPage : React.FC = () => {
   }, [appConfig.appId, appConfig.userId, appConfig.channelName])
 
   useEffect(() => {
+    console.log('111111dddddd')
     scrollToBottom()
   }, [msgList])
 
@@ -130,8 +132,7 @@ const GameLivingPage : React.FC = () => {
     RTM.current.on('ChannelMessage', async ({ channelName, args }) => {
       const [message, memberId] = args
       console.log('channel: ', channelName, ', messsage: ', message.text, ', memberId: ', memberId)
-      console.log('------old msgList:',msgList)
-      let newMsgList = [...msgList,{
+      let newMsgList = [{
         userName: +memberId,
         msg: message.text
       }]
@@ -190,7 +191,7 @@ const GameLivingPage : React.FC = () => {
       renderMode: RenderModeType.RenderModeFit,
     });
     try {
-      engine.current.destroyRendererByView(visterRef.current);
+      //engine.current.destroyRendererByView(visterRef.current);
     } catch (e) {
       console.error(e);
     }
