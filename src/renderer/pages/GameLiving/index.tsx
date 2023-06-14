@@ -244,8 +244,8 @@ const GameLivingPage : React.FC = () => {
     let sources = engine.current?.getScreenCaptureSources({width: 1920, height: 1080},{width: 64, height: 64},true)
     console.log('-----startScreenCapture sources: ',sources)
     let gameSource = sources.find((item) => {
-      return item.sourceName === 'QQ'
-      //return item.sourceName === 'pangkezhengba_agora'
+      //return item.sourceName === 'QQ'
+      return item.sourceName === 'pangkezhengba_agora'
     })
     if (!gameSource) {
       console.error(`targetSource is invalid`);
