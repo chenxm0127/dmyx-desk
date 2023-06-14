@@ -77,9 +77,11 @@ const GameLivingPage : React.FC = () => {
     scrollToBottom()
   }, [msgList])
 
+  /*
   useEffect(() => {
     updateRemoteScreenVideo()
   }, [personList])
+  */
 
   const initRtm = async () => {
     try {
@@ -179,7 +181,22 @@ const GameLivingPage : React.FC = () => {
     }
   }
 
-  const updateRemoteScreenVideo = () => {
+  const updateRemoteScreenVideo = (remoteUid: number) => {
+    try {
+      engine.current.destroyRendererByView(visterRef.current);
+    } catch (e) {
+      console.error(e);
+    }
+    let ret = engine.current.setupRemoteVideo({
+      sourceType: VideoSourceType.VideoSourceRemote,
+      view: visterRef.current,
+      uid: remoteUid,
+      mirrorMode: VideoMirrorModeType.VideoMirrorModeDisabled,
+      renderMode: RenderModeType.RenderModeFit,
+    });
+    console.log('----updateRemoteScreenVideo ret: ',ret)
+    /*
+    console.log('----ret: ',ret)
     if (personList.length > 0) {
       if (visitor.current === undefined) {
 
@@ -204,7 +221,7 @@ const GameLivingPage : React.FC = () => {
         }, connection);
         console.log('----ret: ',ret)
       }
-    }
+    }*/
   }
 
   const updateGameScreenVideo = () => {
@@ -227,8 +244,8 @@ const GameLivingPage : React.FC = () => {
     let sources = engine.current?.getScreenCaptureSources({width: 1920, height: 1080},{width: 64, height: 64},true)
     console.log('-----startScreenCapture sources: ',sources)
     let gameSource = sources.find((item) => {
-      //return item.sourceName === 'zFuse'
-      return item.sourceName === 'pangkezhengba_agora'
+      return item.sourceName === 'QQ'
+      //return item.sourceName === 'pangkezhengba_agora'
     })
     if (!gameSource) {
       console.error(`targetSource is invalid`);
@@ -238,7 +255,7 @@ const GameLivingPage : React.FC = () => {
     console.log('------22222 gameSource: ',gameSource)
     let ret = engine.current?.startScreenCaptureByWindowId(
       gameSource.sourceId,
-      { width: 0, height: 0, x: 0, y: 0 },
+      { width: gameSource.position?.width, height: gameSource.position?.height, x: 0, y: 30 },
       {
         dimensions: { width: appConfig.gameScreenX, height: appConfig.gameScreenY },
         bitrate: appConfig.gameBitrate,
@@ -274,14 +291,14 @@ const GameLivingPage : React.FC = () => {
       'onJoinChannelSuccess',
       (connection: RtcConnection, elapsed: number) => {
         console.log('onJoinChannelSuccess','connection',connection,'elapsed',elapsed)
-        setStartLiving(true)
+        //setStartLiving(true)
       }
     )
     engine.current.addListener(
       'onLeaveChannel',
       (connection: RtcConnection, stats: RtcStats) => {
         console.log('onLeaveChannel','connection',connection,'stats',stats)
-        setStartLiving(false)
+        //setStartLiving(false)
         setPersonList([])
         visitor.current = undefined
       }
@@ -297,6 +314,7 @@ const GameLivingPage : React.FC = () => {
         console.log('------personList: ',personList)
         //let newPersonList = [...personList, userInfo]
         //console.log('-----newPersonList: ',newPersonList)
+        updateRemoteScreenVideo(remoteUid)
         setPersonList((prevData) => [...prevData,userInfo])
       }
     )
@@ -304,9 +322,6 @@ const GameLivingPage : React.FC = () => {
       'onUserOffline',
       (connection: RtcConnection, remoteUid: number, reason: UserOfflineReasonType) => {
         console.log('onUserOffline','connection',connection,'remoteUid',remoteUid,'reason', reason)
-        let newPersonList = personList.filter((item) => {
-          return item.id !== remoteUid
-        })
         if (visitor.current === remoteUid) {
           visitor.current = undefined
         }
@@ -423,23 +438,13 @@ const GameLivingPage : React.FC = () => {
     console.log('-----handleStartClick isGameShow: ',isGameShow)
     let isCapture = false
     if (!isGameShow) {
-      if (!isAppStart.current) {
-        //startApp('QQ')
-        isCapture = startScreenCapture()
-        updateGameScreenVideo() 
-      } else {
-        isCapture = startScreenCapture()
-        updateGameScreenVideo() 
-        if (isCapture) {
-          updateGameScreenVideo() 
-        } else {
-          //startApp('QQ')
-        }
+      isCapture = startScreenCapture()
+      if (isCapture) {
+        updateGameScreenVideo()
       }
     } else {
       stopScreenCapture()
     }
-    
     setIsGameShow((preState) => !preState)
   }
   
@@ -537,22 +542,31 @@ const GameLivingPage : React.FC = () => {
   const handleLivingClick = (e) => {
     console.log('-----handleStartLiving startLiving: ',startLiving)
     if (!startLiving) {
+      setStartLiving(true)
       joinChannel()
       joinRtmChannel()
     } else {
+      setStartLiving(false)
       leaveRtmChannel()
       leaveChannel()
     }
+    setStartVisit(false)
   }
 
   const handleVisitor = (e) => {
     console.log('-----handleVisitor handleVisitor: ',startVisit)
     if (!startVisit) {
       console.log('kaishi')
+      setStartVisit(true)
+      joinChannel()
+      joinRtmChannel()
     } else {
       console.log('jieshu ')
+      setStartVisit(false)
+      leaveRtmChannel()
+      leaveChannel()
     }
-    setStartVisit(!startVisit)
+    setStartLiving(false)
   }
 
   const sendRtmMessage = async (msg) => {
@@ -664,14 +678,13 @@ const GameLivingPage : React.FC = () => {
     console.log('-----renderScreenMain globalDisable: ',globalDisable)
     return (
       <>
-        <div className={styles.game} ref={gameRef}>{isGameShow ? '':'游戏预览'}</div>
+        <div className={styles.game} ref={gameRef}>{(isGameShow || startVisit) ? '':'游戏预览'}</div>
         <div className={styles.person}>
           <div className={styles.meta} ref={metaRef}>{!globalDisable ? '': '房间主播预览'}</div>
-          {(globalDisable || personList.length>0)&&(<div className={styles.meta} ref={visterRef}>{personList.length>0 ? '':'房间主播预览'}</div>)}
         </div>
         <div className={styles.livingWapper}>
-          <button onClick={handleVisitor}>{startVisit? '结束观看':'开始观看'}</button>
-          <button onClick={handleLivingClick}>{startLiving? '结束直播':'开始直播'}</button>
+          <button disabled={startLiving} onClick={handleVisitor}>{startVisit? '结束观看':'开始观看'}</button>
+          <button disabled={startVisit} onClick={handleLivingClick}>{startLiving? '结束直播':'开始直播'}</button>
         </div>
       </>
     )
