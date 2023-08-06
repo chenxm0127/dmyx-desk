@@ -20,6 +20,9 @@ import apiClient from '../../utils/request'
 import { message } from 'antd'
 
 const defaultConfig= {
+  env: 'http://service-staging.agora.io/bullet-game/api',
+  vid: '12345',
+  instructionPic: 'off',
   appId: '0411799bd126418c9ea73cb37f2c40b4',
   userId: 1001,
   openId: 'opid001',
@@ -49,9 +52,10 @@ const GameLivingPage : React.FC = () => {
   const [isGameShow, setIsGameShow] = useState(false)
   const [startLiving, setStartLiving] = useState(false)
   const [startVisit, setStartVisit] = useState(false)
-  const [awardInfo, setAwardInfo] = useState({ dianzan: 5,rose: 1,bomb: 1,rocket: 1 })
+  const [awardInfo, setAwardInfo] = useState({ dianzan: 5,rose: 1,bomb: 1,rocket: 1,gift4:1, gift5:1, gift6:1 })
   const [inputMsg, setInputMsg] = useState<string>('')
   const [isAppExist, setIsAppExist] = useState(true)
+  const [startServer, setStartServer] = useState(false)
   const isAppStart = useRef(false)
   const gameRef = useRef(null)
   const metaRef = useRef(null)
@@ -445,6 +449,9 @@ const GameLivingPage : React.FC = () => {
       case 'channelName':
       case 'userId':
       case 'openId':
+      case 'env':
+      case 'vid':
+      case 'instructionPic':
         {
           let newAppConfig = {
             ...appConfig,
@@ -471,6 +478,10 @@ const GameLivingPage : React.FC = () => {
       setIsGameShow(false)
     }
     //setIsGameShow((preState) => !preState)
+  }
+
+  const handleStartServerClick = (e) => {
+    setStartServer(!startServer)
   }
   
   const scrollToBottom = () => {
@@ -500,7 +511,7 @@ const GameLivingPage : React.FC = () => {
         break
       }
       case 'roseBtn': {
-        msg = `${awardInfo.rose}个玫瑰10币`
+        msg = `${awardInfo.rose}个礼物1`
         reqConfig = {
           ...baseConfig,
           msg_type: 'live_gift',
@@ -510,7 +521,7 @@ const GameLivingPage : React.FC = () => {
         break
       }
       case 'bombBtn': {
-        msg = `${awardInfo.bomb}个炸弹50币`
+        msg = `${awardInfo.bomb}个礼物2`
         reqConfig = {
           ...baseConfig,
           msg_type: 'live_gift',
@@ -520,12 +531,42 @@ const GameLivingPage : React.FC = () => {
         break
       }
       case 'rocketBtn': {
-        msg = `${awardInfo.rocket}个火箭1000币`
+        msg = `${awardInfo.rocket}个礼物3`
         reqConfig = {
           ...baseConfig,
           msg_type: 'live_gift',
           gift_num: awardInfo.rocket,
           gift_id: '1003'
+        }
+        break
+      }
+      case 'gift4Btn': {
+        msg = `${awardInfo.gift4}个礼物4`
+        reqConfig = {
+          ...baseConfig,
+          msg_type: 'live_gift',
+          gift_num: awardInfo.gift4,
+          gift_id: '1004'
+        }
+        break
+      }
+      case 'gift5Btn': {
+        msg = `${awardInfo.gift5}个礼物5`
+        reqConfig = {
+          ...baseConfig,
+          msg_type: 'live_gift',
+          gift_num: awardInfo.gift5,
+          gift_id: '1005'
+        }
+        break
+      }
+      case 'gift6Btn': {
+        msg = `${awardInfo.gift6}个礼物6`
+        reqConfig = {
+          ...baseConfig,
+          msg_type: 'live_gift',
+          gift_num: awardInfo.gift6,
+          gift_id: '1006'
         }
         break
       }
@@ -549,7 +590,10 @@ const GameLivingPage : React.FC = () => {
       dianzan: 5,
       rose: 1,
       bomb: 1,
-      rocket: 1
+      rocket: 1,
+      gift4:1,
+      gift5:1,
+      gift6:1
     })
   }
 
@@ -640,7 +684,7 @@ const GameLivingPage : React.FC = () => {
             Object.keys(appConfig).map((key,index) => {
               return (
                 <div key={`${key}-${index}`} style={{display:'flex',flex:'1', justifyContent:'space-between',marginTop:'6px',paddingLeft:'4px'}}>
-                  <label>{key}</label>
+                  {key === 'env' ? (<label>服务器环境</label>) : (<label>{key}</label>)}
                   <input disabled={globalDisable} style={{width: '60%', marginRight:'4px'}} id={key} value={appConfig[key]} onChange={(e) => handleOnInputChange(e.target.id, e.target.value)}/>
                 </div>
               )
@@ -654,9 +698,12 @@ const GameLivingPage : React.FC = () => {
     return (
       <>
         <p style={{fontSize: '16px',paddingLeft:'4px'}}>玩法</p>
-        <div style={{display:'flex',justifyContent:'space-between'}}>
+        <div style={{display:'flex',justifyContent:'space-between', alignItems: 'center'}}>
           <span style={{marginLeft: '12px'}}>萌萌宠之战</span>
-          <button disabled={startVisit} style={{width: '35%',marginRight:'4px'}} onClick={handleMethodClick}>{isGameShow ? '结束' : '开始'}</button>
+          <div style={{width: '50%',marginRight:'4px', display: 'flex', justifyContent: 'space-between'}}>
+            <button disabled={startVisit} onClick={handleMethodClick}>{isGameShow ? '结束' : '开始'}</button>
+            <button onClick={handleStartServerClick}>{startServer ? '关闭弹幕游戏服务' : '开启弹幕游戏服务'}</button>
+          </div>
         </div>
       </>
     )
@@ -668,32 +715,47 @@ const GameLivingPage : React.FC = () => {
         <div className={styles.optBtnWapper}>
           <div>
             <div className={styles.btnWapper}>
-              <button disabled={!startLiving && !startVisit} id='dianzanBtn' onClick={handleOnOptBtnClick}>点赞</button>
+              <button disabled={!startServer} id='dianzanBtn' onClick={handleOnOptBtnClick}>点赞</button>
               <span>x</span>
-              <input disabled={!startLiving && !startVisit} id='dianzan' onChange={(e) => handleOptmsgInputChange(e.target.id, e.target.value)} value={awardInfo.dianzan} />
+              <input disabled={!startServer} id='dianzan' onChange={(e) => handleOptmsgInputChange(e.target.id, e.target.value)} value={awardInfo.dianzan} />
+            </div>
+            <div className={styles.btnWapper}>
+              <button disabled={!startServer} id='gift4Btn' onClick={handleOnOptBtnClick}>礼物4</button>
+              <span>x</span>
+              <input disabled={!startServer} id='gift4' onChange={(e) => handleOptmsgInputChange(e.target.id, e.target.value)} value={awardInfo.gift4} />
+            </div>
+            <div className={styles.btnWapper}>
+              <button disabled={!startServer} id='gift5Btn' onClick={handleOnOptBtnClick}>礼物5</button>
+              <span>x</span>
+              <input disabled={!startServer} id='gift5' onChange={(e) => handleOptmsgInputChange(e.target.id, e.target.value)} value={awardInfo.gift5} />
+            </div>
+            <div className={styles.btnWapper}>
+              <button disabled={!startServer} id='gift6Btn' onClick={handleOnOptBtnClick}>礼物6</button>
+              <span>x</span>
+              <input disabled={!startServer} id='gift6' onChange={(e) => handleOptmsgInputChange(e.target.id, e.target.value)} value={awardInfo.gift6} />
             </div>
           </div>
-          <div style={{display: 'flex', flexDirection:'column'}}>
+          <div style={{display: 'flex', flexDirection:'column', flexWrap:'wrap'}}>
             <div className={styles.btnWapper}>
-              <button disabled={!startLiving && !startVisit} id='roseBtn' onClick={handleOnOptBtnClick}>玫瑰10币</button>
+              <button disabled={!startServer} id='roseBtn' onClick={handleOnOptBtnClick}>礼物1</button>
               <span>x</span>
-              <input disabled={!startLiving && !startVisit} id='rose' onChange={(e) => handleOptmsgInputChange(e.target.id, e.target.value)} value={awardInfo.rose} />
+              <input disabled={!startServer} id='rose' onChange={(e) => handleOptmsgInputChange(e.target.id, e.target.value)} value={awardInfo.rose} />
             </div>
             <div className={styles.btnWapper}>
-              <button disabled={!startLiving && !startVisit} id='bombBtn' onClick={handleOnOptBtnClick}>炸弹50币</button>
+              <button disabled={!startServer} id='bombBtn' onClick={handleOnOptBtnClick}>礼物2</button>
               <span>x</span>
-              <input disabled={!startLiving && !startVisit} id='bomb' onChange={(e) => handleOptmsgInputChange(e.target.id, e.target.value)} value={awardInfo.bomb} />
+              <input disabled={!startServer} id='bomb' onChange={(e) => handleOptmsgInputChange(e.target.id, e.target.value)} value={awardInfo.bomb} />
             </div>
             <div className={styles.btnWapper}>
-              <button disabled={!startLiving && !startVisit} id='rocketBtn' onClick={handleOnOptBtnClick}>火箭1000币</button>
+              <button disabled={!startServer} id='rocketBtn' onClick={handleOnOptBtnClick}>礼物3</button>
               <span>x</span>
-              <input disabled={!startLiving && !startVisit} id='rocket' onChange={(e) => handleOptmsgInputChange(e.target.id, e.target.value)} value={awardInfo.rocket} />
+              <input disabled={!startServer} id='rocket' onChange={(e) => handleOptmsgInputChange(e.target.id, e.target.value)} value={awardInfo.rocket} />
             </div>
           </div>
         </div>
         <div className={styles.msgSend}>
-          <input disabled={!startLiving && !startVisit} type="text" maxLength={200} onChange={handleInputMsgChange} placeholder='说点什么...' value={inputMsg}/>
-          <button disabled={!startLiving && !startVisit} onClick={sendMsg}>发送</button>
+          <input disabled={!startServer} type="text" maxLength={200} onChange={handleInputMsgChange} placeholder='说点什么...' value={inputMsg}/>
+          <button disabled={!startServer} onClick={sendMsg}>发送</button>
         </div>
       </>
     )
