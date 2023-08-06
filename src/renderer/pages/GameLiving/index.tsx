@@ -23,6 +23,8 @@ const defaultConfig= {
   env: 'http://service-staging.agora.io/bullet-game/api',
   vid: '12345',
   instructionPic: 'off',
+  userCode: 'usercode001',
+  appPath: '',
   appId: '0411799bd126418c9ea73cb37f2c40b4',
   userId: 1001,
   openId: 'opid001',
@@ -268,6 +270,7 @@ const GameLivingPage : React.FC = () => {
     console.log('-----startScreenCapture sources: ',sources)
     let gameSource = sources.find((item) => {
       //return item.sourceName === 'QQ'
+      //return item.sourceName === '网易有道词典'
       return item.sourceName === 'pangkezhengba_agora'
     })
     if (!gameSource) {
@@ -452,6 +455,8 @@ const GameLivingPage : React.FC = () => {
       case 'env':
       case 'vid':
       case 'instructionPic':
+      case 'userCode':
+      case 'appPath':
         {
           let newAppConfig = {
             ...appConfig,
