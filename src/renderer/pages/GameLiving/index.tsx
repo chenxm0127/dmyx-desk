@@ -572,6 +572,7 @@ const GameLivingPage : React.FC = () => {
       }
     }
     console.log('----request config: ', reqConfig)
+    const reqUrl = `${appConfig.env}/live_data/task/push`
     
     apiClient.post('live_data/living/message', reqConfig).then(response => {
       console.log(response.data)
