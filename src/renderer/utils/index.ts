@@ -107,3 +107,13 @@ export function generateRandomNumber(): string {
   }
   return result;
 }
+
+/**
+ * 生成消息id，基于时间戳
+ */
+export function generateMessageId(): string {
+  const timestamp = Date.now().toString(); // 获取当前时间戳
+  const randomNum = Math.floor(Math.random() * 90000) + 10000; // 生成五位随机数
+  const messageId = timestamp + randomNum.toString(); // 结合时间戳和随机数生成消息 ID
+  return messageId;
+}

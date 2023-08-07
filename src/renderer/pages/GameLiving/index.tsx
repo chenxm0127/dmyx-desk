@@ -12,7 +12,7 @@ import {
   UserOfflineReasonType
 } from 'agora-electron-sdk'
 import styles from './index.scss'
-import { debounce, generateRandomNumber } from '../../utils'
+import { debounce, generateMessageId } from '../../utils'
 import RtmClient from '../../utils/rtm-client'
 import { checkAppInstall, startApp, checkAppInfoEvent, startAppInfoEvent} from '../../utils/ipcRenderEvent'
 import Config from '../../config/agora.config'
@@ -29,7 +29,7 @@ const defaultConfig= {
   userId: 1001,
   openId: 'opid001',
   userName: '游戏主播1',
-  channelName: 'gameroom1',
+  channelName: 'roomid_12345',
   gameScreenX: 1920,
   gameScreenY: 1080,
   gameScreenFPS: 30,
@@ -499,79 +499,140 @@ const GameLivingPage : React.FC = () => {
     console.log('-----handleOnOptBtnClick e: ',e.target.id)
     let msg = '', msg_type = '', giftid = '',giftvalue = 0
     let baseConfig = {
-      roomid: appConfig.channelName,
-      openid: appConfig.openId,
-      avatar_url: '',
-      nickname: appConfig.userName
+      vid: appConfig.vid,
+      gameid: 'pkzb',
+      roomid: appConfig.channelName
     }
     let reqConfig
     switch (e.target.id) {
       case 'dianzanBtn': {
         msg = `${awardInfo.dianzan}个点赞`
+        let reqBody = [{
+          msg_id: generateMessageId(),
+          openid: appConfig.openId,
+          like_num: awardInfo.dianzan,
+          avatar_url: '',
+          nickname: appConfig.userName,
+          timestamp: new Date().getTime()
+        }]
         reqConfig = {
           ...baseConfig,
-          likenum: awardInfo.dianzan,
-          msg_type: 'live_like'
+          msg_type: 'live_like',
+          payload: JSON.stringify(reqBody)
         }
         break
       }
       case 'roseBtn': {
         msg = `${awardInfo.rose}个礼物1`
+        let reqBody = [{
+          msg_id: generateMessageId(),
+          openid: appConfig.openId,
+          gift_id: '1001',
+          gift_num: awardInfo.rose,
+          gift_value: (awardInfo.rose * 0.1).toFixed(2),
+          avatar_url: '',
+          nickname: appConfig.userName,
+          timestamp: new Date().getTime()
+        }]
         reqConfig = {
           ...baseConfig,
           msg_type: 'live_gift',
-          gift_num: awardInfo.rose,
-          gift_id: '1001',
+          payload: JSON.stringify(reqBody)
         }
         break
       }
       case 'bombBtn': {
         msg = `${awardInfo.bomb}个礼物2`
+        let reqBody = [{
+          msg_id: generateMessageId(),
+          openid: appConfig.openId,
+          gift_id: '1002',
+          gift_num: awardInfo.bomb,
+          gift_value: (awardInfo.bomb * 5.2).toFixed(2),
+          avatar_url: '',
+          nickname: appConfig.userName,
+          timestamp: new Date().getTime()
+        }]
         reqConfig = {
           ...baseConfig,
           msg_type: 'live_gift',
-          gift_num: awardInfo.bomb,
-          gift_id: '1002',
+          payload: JSON.stringify(reqBody)
         }
         break
       }
       case 'rocketBtn': {
         msg = `${awardInfo.rocket}个礼物3`
+        let reqBody = [{
+          msg_id: generateMessageId(),
+          openid: appConfig.openId,
+          gift_id: '1003',
+          gift_num: awardInfo.rocket,
+          gift_value: (awardInfo.rocket * 9.9).toFixed(2),
+          avatar_url: '',
+          nickname: appConfig.userName,
+          timestamp: new Date().getTime()
+        }]
         reqConfig = {
           ...baseConfig,
           msg_type: 'live_gift',
-          gift_num: awardInfo.rocket,
-          gift_id: '1003'
+          payload: JSON.stringify(reqBody)
         }
         break
       }
       case 'gift4Btn': {
         msg = `${awardInfo.gift4}个礼物4`
+        let reqBody = [{
+          msg_id: generateMessageId(),
+          openid: appConfig.openId,
+          gift_id: '1004',
+          gift_num: awardInfo.gift4,
+          gift_value: (awardInfo.gift4 * 19.9).toFixed(2),
+          avatar_url: '',
+          nickname: appConfig.userName,
+          timestamp: new Date().getTime()
+        }]
         reqConfig = {
           ...baseConfig,
           msg_type: 'live_gift',
-          gift_num: awardInfo.gift4,
-          gift_id: '1004'
+          payload: JSON.stringify(reqBody)
         }
         break
       }
       case 'gift5Btn': {
         msg = `${awardInfo.gift5}个礼物5`
+        let reqBody = [{
+          msg_id: generateMessageId(),
+          openid: appConfig.openId,
+          gift_id: '1005',
+          gift_num: awardInfo.gift5,
+          gift_value: (awardInfo.gift5 * 29.9).toFixed(2),
+          avatar_url: '',
+          nickname: appConfig.userName,
+          timestamp: new Date().getTime()
+        }]
         reqConfig = {
           ...baseConfig,
           msg_type: 'live_gift',
-          gift_num: awardInfo.gift5,
-          gift_id: '1005'
+          payload: JSON.stringify(reqBody)
         }
         break
       }
       case 'gift6Btn': {
         msg = `${awardInfo.gift6}个礼物6`
+        let reqBody = [{
+          msg_id: generateMessageId(),
+          openid: appConfig.openId,
+          gift_id: '1006',
+          gift_num: awardInfo.gift6,
+          gift_value: (awardInfo.gift6 * 66.6).toFixed(2),
+          avatar_url: '',
+          nickname: appConfig.userName,
+          timestamp: new Date().getTime()
+        }]
         reqConfig = {
           ...baseConfig,
           msg_type: 'live_gift',
-          gift_num: awardInfo.gift6,
-          gift_id: '1006'
+          payload: JSON.stringify(reqBody)
         }
         break
       }
@@ -579,7 +640,7 @@ const GameLivingPage : React.FC = () => {
     console.log('----request config: ', reqConfig)
     const reqUrl = `${appConfig.env}/live_data/task/push`
     
-    apiClient.post('live_data/living/message', reqConfig).then(response => {
+    apiClient.post(reqUrl, reqConfig).then(response => {
       console.log(response.data)
     }).catch(err => {
       console.error(err)
@@ -651,16 +712,25 @@ const GameLivingPage : React.FC = () => {
   const sendMsg = (e) => {
     if (inputMsg.trim() !== '') {
       console.log('----sendMsg: ',inputMsg)
-      let reqConfig = {
-        roomid: appConfig.channelName,
+
+      let reqBody = [{
+        msg_id: generateMessageId(),
         openid: appConfig.openId,
+        content: inputMsg,
         avatar_url: '',
         nickname: appConfig.userName,
-        msg_type: "live_comment",
-        content: inputMsg
+        timestamp: new Date().getTime()
+      }]
+      let reqConfig = {
+        vid: appConfig.vid,
+        gameid: 'pkzb',
+        roomid: appConfig.channelName,
+        msg_type: 'live_comment',
+        payload: JSON.stringify(reqBody)
       }
       console.log('----request config: ', reqConfig)
-      apiClient.post('live_data/living/message', reqConfig).then(response => {
+      const reqUrl = `${appConfig.env}/live_data/task/push`
+      apiClient.post(reqUrl, reqConfig).then(response => {
         console.log(response.data)
       }).catch(err => {
         console.error(err)
