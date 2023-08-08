@@ -29,7 +29,7 @@ const defaultConfig= {
   userId: 1001,
   openId: 'opid001',
   userName: '游戏主播1',
-  channelName: 'roomid_12345',
+  channelName: 'gameroom1',
   gameScreenX: 1920,
   gameScreenY: 1080,
   gameScreenFPS: 30,
@@ -485,8 +485,59 @@ const GameLivingPage : React.FC = () => {
     //setIsGameShow((preState) => !preState)
   }
 
+  const hanldeMethodClickStop = (e) => {
+    console.log('stop method')
+    stopScreenCapture()
+    stopGameScreenVideo()
+    setIsGameShow(false)
+  }
+
   const handleStartServerClick = (e) => {
-    setStartServer(!startServer)
+    console.log('----start')
+    const reqUrl = `${appConfig.env}/live_data/room/start`
+    let reqConfig = {
+      vid: appConfig.vid,
+      gameid: 'pkzb',
+      roomid: appConfig.channelName,
+      rtc_cname: appConfig.channelName,
+      openid: appConfig.openId,
+      nickname: appConfig.userName,
+      avatar_url: ''
+    }
+    
+    apiClient.post(reqUrl, reqConfig).then(response => {
+      console.log(response.data)
+      if (response.data.err_no === 0) {
+        setStartServer(true)
+      } else {
+        message.error('开启游戏直播间失败，请重试')
+      }
+    }).catch(err => {
+      message.error('开启游戏直播间失败，请重试')
+      console.error(err)
+    })
+  }
+
+  const hanldeStopServerClick = (e) => {
+    console.log('-----stop')
+    const reqUrl = `${appConfig.env}/live_data/room/stop`
+    let reqConfig = {
+      vid: appConfig.vid,
+      gameid: 'pkzb',
+      roomid: appConfig.channelName,
+    }
+    
+    apiClient.post(reqUrl, reqConfig).then(response => {
+      console.log(response.data)
+      if (response.data.err_no === 0) {
+        setStartServer(false)
+      } else {
+        message.error('关闭游戏直播间失败，请重试')
+      }
+    }).catch(err => {
+      message.error('关闭游戏直播间失败，请重试')
+      console.error(err)
+    })
   }
   
   const scrollToBottom = () => {
@@ -777,8 +828,8 @@ const GameLivingPage : React.FC = () => {
         <div style={{display:'flex',justifyContent:'space-between', alignItems: 'center'}}>
           <span style={{marginLeft: '12px'}}>萌萌宠之战</span>
           <div style={{width: '50%',marginRight:'4px', display: 'flex', justifyContent: 'space-between'}}>
-            <button disabled={startVisit} onClick={handleMethodClick}>{isGameShow ? '结束' : '开始'}</button>
-            <button onClick={handleStartServerClick}>{startServer ? '关闭弹幕游戏服务' : '开启弹幕游戏服务'}</button>
+            <button disabled={startVisit} onClick={isGameShow ? hanldeMethodClickStop : handleMethodClick}>{isGameShow ? '结束' : '开始'}</button>
+            <button onClick={ startServer ? hanldeStopServerClick : handleStartServerClick}>{startServer ? '关闭弹幕游戏服务' : '开启弹幕游戏服务'}</button>
           </div>
         </div>
       </>
