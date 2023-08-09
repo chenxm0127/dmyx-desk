@@ -4,9 +4,9 @@ export const checkAppInstall = (appName: string) => {
   ipcRenderer.send('check-app-exist', appName)
 }
 
-export const startApp = (appName: string) => {
-  console.log('---startApp appName: ',appName)
-  ipcRenderer.send('start-app', appName)
+export const startApp = (appInfo) => {
+  console.log('---startApp appName: ',appInfo)
+  ipcRenderer.send('start-app', appInfo)
 }
 
 export const checkAppInfoEvent = (cb: (data: any) => void) => {

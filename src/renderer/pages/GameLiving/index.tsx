@@ -172,6 +172,7 @@ const GameLivingPage : React.FC = () => {
 
   const startAppCallBack = (eventInfo) => {
     console.log('-----startAppCallBack: ', eventInfo)
+    /*
     if (eventInfo === 'success') {
       isAppStart.current = true
       if (startScreenCapture()) {
@@ -185,7 +186,7 @@ const GameLivingPage : React.FC = () => {
       }
     } else {
       isAppStart.current = false
-    }
+    }*/
   }
 
   const updateRemoteScreenVideo = (remoteUid: number) => {
@@ -470,6 +471,19 @@ const GameLivingPage : React.FC = () => {
 
   const handleMethodClick = (e) => {
     console.log('-----handleStartClick isGameShow: ',isGameShow)
+    if (appConfig.appPath.length <= 0) {
+      message.error('请输入应用安装地址')
+      return
+    }
+    const appInfo = {
+      instructionPic: appConfig.instructionPic,
+      vid: appConfig.vid,
+      usercode: appConfig.userCode,
+      appName: 'pangkezhengba_agora_dev',
+      appPath: appConfig.appPath
+    }
+    startApp(appInfo)
+    /*
     let isCapture = false
     if (!isGameShow) {
       isCapture = startScreenCapture()
@@ -483,6 +497,7 @@ const GameLivingPage : React.FC = () => {
       setIsGameShow(false)
     }
     //setIsGameShow((preState) => !preState)
+    */
   }
 
   const hanldeMethodClickStop = (e) => {

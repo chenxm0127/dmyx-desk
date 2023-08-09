@@ -22,9 +22,12 @@ const registerIpcMainEvent = () => {
 
   ipcMain.on('start-app', (event, args) => {
     console.log('----start-app args: ',args)
+    const { instructionPic, vid, usercode, appName, appPath } = args
     var appProcess
     if (os.platform() === 'win32') {
-      appProcess = exec(`start ${args}`)
+      let appCmd = `start ${appPath}\\${appName} -instructionPic ${instructionPic} -usercode ${usercode} -vid ${vid}`
+      console.log('----appCmd: ', appCmd)
+      appProcess = exec(appCmd)
     } else if (os.platform() === 'darwin') {
       appProcess = exec(`open -a ${args}`)
     }
