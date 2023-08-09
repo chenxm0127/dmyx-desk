@@ -1,5 +1,5 @@
 import { app, BrowserWindow, systemPreferences, ipcMain } from 'electron'
-import { exec } from 'child_process'
+import { exec, spawn } from 'child_process'
 import * as os from 'os'
 import path from 'path';
 import { format as formatUrl } from 'url';
@@ -27,7 +27,8 @@ const registerIpcMainEvent = () => {
     if (os.platform() === 'win32') {
       let appCmd = `start ${appPath}\\${appName} -instructionPic ${instructionPic} -usercode ${usercode} -vid ${vid}`
       console.log('----appCmd: ', appCmd)
-      appProcess = exec(appCmd)
+      //appProcess = exec(appCmd)
+      appProcess = spawn('cmd.exe',['/c', appCmd], {shell: true})
     } else if (os.platform() === 'darwin') {
       appProcess = exec(`open -a ${args}`)
     }
@@ -35,10 +36,15 @@ const registerIpcMainEvent = () => {
       console.log('error: ',e)
       event.reply('start-app-result', 'failed');
     })
+
+    appProcess.on('spawn', () => {
+      console.log('Child process spawned successfully')
+      event.reply('start-app-result', 'success');
+    })
     appProcess.on('close', (code) => {
       console.log('-----code: ',code)
       if (code === 0) {
-        event.reply('start-app-result', 'success');
+        event.reply('start-app-result', 'exit');
       } else {
         event.reply('start-app-result', 'failed');
       }
