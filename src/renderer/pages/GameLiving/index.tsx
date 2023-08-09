@@ -271,7 +271,7 @@ const GameLivingPage : React.FC = () => {
     let gameSource = sources.find((item) => {
       //return item.sourceName === 'QQ'
       //return item.sourceName === '网易有道词典'
-      return item.sourceName === 'pangkezhengba_agora'
+      return item.sourceName === 'pangkezhengba_agora' || item.sourceName === 'pangkezhengba_agora_dev'
     })
     if (!gameSource) {
       console.error(`targetSource is invalid`);
