@@ -25,7 +25,7 @@ const registerIpcMainEvent = () => {
     const { instructionPic, vid, usercode, appName, appPath } = args
     var appProcess
     if (os.platform() === 'win32') {
-      let appCmd = `start ${appPath}\\${appName} -instructionPic ${instructionPic} -usercode ${usercode} -vid ${vid}`
+      let appCmd = `start ${appPath}\\${appName} -instructionPic ${instructionPic} -token ${usercode} -vid ${vid}`
       console.log('----appCmd: ', appCmd)
       //appProcess = exec(appCmd)
       appProcess = spawn('cmd.exe',['/c', appCmd], {shell: true})

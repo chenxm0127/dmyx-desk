@@ -172,6 +172,23 @@ const GameLivingPage : React.FC = () => {
 
   const startAppCallBack = (eventInfo) => {
     console.log('-----startAppCallBack: ', eventInfo)
+    if (eventInfo === 'success') {
+      let isCapture = false
+      if (!isGameShow) {
+        setTimeout(() => {
+          isCapture = startScreenCapture()
+          if (isCapture) {
+            updateGameScreenVideo()
+            setIsGameShow(true)
+          }
+        },5000)
+        
+      } else {
+        stopScreenCapture()
+        stopGameScreenVideo()
+        setIsGameShow(false)
+      }
+    }
     /*
     if (eventInfo === 'success') {
       isAppStart.current = true
