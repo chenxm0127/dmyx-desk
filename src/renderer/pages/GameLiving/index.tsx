@@ -178,13 +178,21 @@ const GameLivingPage : React.FC = () => {
     if (eventInfo === 'success') {
       console.log('------ddddddddddd')
       let isCapture = false
+      while(!isCapture) {
+        isCapture = startScreenCapture()
+        if (isCapture) {
+          updateGameScreenVideo()
+          setIsGameShow(true)
+        }
+      }
+      /*
       setTimeout(() => {
         isCapture = startScreenCapture()
         if (isCapture) {
           updateGameScreenVideo()
           setIsGameShow(true)
         }
-      },6000)
+      },6000)*/
       /*
       if (!isGameShow) {
         setTimeout(() => {
@@ -309,6 +317,7 @@ const GameLivingPage : React.FC = () => {
       return false
     }
     console.log('------22222 gameSource: ',gameSource)
+    engine.current?.stopScreenCapture()
     let ret = engine.current?.startScreenCaptureByWindowId(
       gameSource.sourceId,
       { width: gameSource.position?.width, height: gameSource.position?.height, x: 0, y: 30 },
