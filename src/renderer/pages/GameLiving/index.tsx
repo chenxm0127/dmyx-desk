@@ -172,8 +172,20 @@ const GameLivingPage : React.FC = () => {
 
   const startAppCallBack = (eventInfo) => {
     console.log('-----startAppCallBack: ', eventInfo)
+    if (eventInfo === 'exit') {
+      return
+    }
     if (eventInfo === 'success') {
+      console.log('------ddddddddddd')
       let isCapture = false
+      setTimeout(() => {
+        isCapture = startScreenCapture()
+        if (isCapture) {
+          updateGameScreenVideo()
+          setIsGameShow(true)
+        }
+      },6000)
+      /*
       if (!isGameShow) {
         setTimeout(() => {
           isCapture = startScreenCapture()
@@ -187,7 +199,7 @@ const GameLivingPage : React.FC = () => {
         stopScreenCapture()
         stopGameScreenVideo()
         setIsGameShow(false)
-      }
+      }*/
     }
     /*
     if (eventInfo === 'success') {
@@ -439,7 +451,7 @@ const GameLivingPage : React.FC = () => {
     engine.current.leaveChannel()
   }
 
-  const handleOnInputChange = debounce((id, value) => {
+  const handleOnInputChange = (id, value) => {
     console.log('----event: ',value)
     console.log('----event id: ',id)
     switch (id) {
@@ -484,7 +496,7 @@ const GameLivingPage : React.FC = () => {
         }
         break
     }
-  },100)
+  }
 
   const handleMethodClick = (e) => {
     console.log('-----handleStartClick isGameShow: ',isGameShow)
@@ -534,7 +546,7 @@ const GameLivingPage : React.FC = () => {
       rtc_cname: appConfig.channelName,
       openid: appConfig.openId,
       nickname: appConfig.userName,
-      avatar_url: ''
+      avatar_url: 'test.jpg'
     }
     
     apiClient.post(reqUrl, reqConfig).then(response => {
@@ -594,7 +606,7 @@ const GameLivingPage : React.FC = () => {
           msg_id: generateMessageId(),
           openid: appConfig.openId,
           like_num: awardInfo.dianzan,
-          avatar_url: '',
+          avatar_url: 'test.jpg',
           nickname: appConfig.userName,
           timestamp: new Date().getTime()
         }]
@@ -612,8 +624,8 @@ const GameLivingPage : React.FC = () => {
           openid: appConfig.openId,
           gift_id: '1001',
           gift_num: awardInfo.rose,
-          gift_value: (awardInfo.rose * 0.1).toFixed(2),
-          avatar_url: '',
+          gift_value: awardInfo.rose * 10,
+          avatar_url: 'test.jpg',
           nickname: appConfig.userName,
           timestamp: new Date().getTime()
         }]
@@ -631,8 +643,8 @@ const GameLivingPage : React.FC = () => {
           openid: appConfig.openId,
           gift_id: '1002',
           gift_num: awardInfo.bomb,
-          gift_value: (awardInfo.bomb * 5.2).toFixed(2),
-          avatar_url: '',
+          gift_value: awardInfo.bomb * 520,
+          avatar_url: 'test.jpg',
           nickname: appConfig.userName,
           timestamp: new Date().getTime()
         }]
@@ -650,8 +662,8 @@ const GameLivingPage : React.FC = () => {
           openid: appConfig.openId,
           gift_id: '1003',
           gift_num: awardInfo.rocket,
-          gift_value: (awardInfo.rocket * 9.9).toFixed(2),
-          avatar_url: '',
+          gift_value: awardInfo.rocket * 990,
+          avatar_url: 'test.jpg',
           nickname: appConfig.userName,
           timestamp: new Date().getTime()
         }]
@@ -669,8 +681,8 @@ const GameLivingPage : React.FC = () => {
           openid: appConfig.openId,
           gift_id: '1004',
           gift_num: awardInfo.gift4,
-          gift_value: (awardInfo.gift4 * 19.9).toFixed(2),
-          avatar_url: '',
+          gift_value: awardInfo.gift4 * 1990,
+          avatar_url: 'test.jpg',
           nickname: appConfig.userName,
           timestamp: new Date().getTime()
         }]
@@ -688,8 +700,8 @@ const GameLivingPage : React.FC = () => {
           openid: appConfig.openId,
           gift_id: '1005',
           gift_num: awardInfo.gift5,
-          gift_value: (awardInfo.gift5 * 29.9).toFixed(2),
-          avatar_url: '',
+          gift_value: awardInfo.gift5 * 2990,
+          avatar_url: 'test.jpg',
           nickname: appConfig.userName,
           timestamp: new Date().getTime()
         }]
@@ -707,8 +719,8 @@ const GameLivingPage : React.FC = () => {
           openid: appConfig.openId,
           gift_id: '1006',
           gift_num: awardInfo.gift6,
-          gift_value: (awardInfo.gift6 * 66.6).toFixed(2),
-          avatar_url: '',
+          gift_value: awardInfo.gift6 * 6660,
+          avatar_url: 'test.jpg',
           nickname: appConfig.userName,
           timestamp: new Date().getTime()
         }]
@@ -800,7 +812,7 @@ const GameLivingPage : React.FC = () => {
         msg_id: generateMessageId(),
         openid: appConfig.openId,
         content: inputMsg,
-        avatar_url: '',
+        avatar_url: 'test.jpg',
         nickname: appConfig.userName,
         timestamp: new Date().getTime()
       }]
