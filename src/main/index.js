@@ -2,6 +2,7 @@ import { app, BrowserWindow, systemPreferences, ipcMain } from 'electron'
 import { exec, spawn } from 'child_process'
 import * as os from 'os'
 import path from 'path';
+import fs from 'fs'
 import { format as formatUrl } from 'url';
 import { checkAppExists } from './util'
 
@@ -30,7 +31,19 @@ const registerIpcMainEvent = () => {
       //appProcess = exec(appCmd)
       appProcess = spawn('cmd.exe',['/c', appCmd], {shell: true})
     } else if (os.platform() === 'darwin') {
-      appProcess = exec(`open -a ${args}`)
+      if (!fs.existsSync(`${appPath}/${appName}`)) {
+        event.reply('start-app-result', 'failed');
+        return;
+      }
+      const appArgs = [
+        '-instructionPic', instructionPic,
+        '-token', usercode,
+        '-vid', vid
+      ];
+      //let appCmd = `open -a ${appPath}/${appName} --args -instructionPic ${instructionPic} -token ${usercode} -vid ${vid}`
+      console.log('----appArgs: ', appArgs)
+      //appProcess = exec(`open -a ${appCmd}`)
+      appProcess = spawn('open', ['-a', `${appPath}/${appName}`, ...appArgs]);
     }
     appProcess.on('error', (e) => {
       console.log('error: ',e)

@@ -175,6 +175,7 @@ const GameLivingPage : React.FC = () => {
     if (eventInfo === 'exit') {
       return
     }
+    
     if (eventInfo === 'success') {
       console.log('------ddddddddddd')
       let isCapture = false
@@ -185,29 +186,9 @@ const GameLivingPage : React.FC = () => {
           setIsGameShow(true)
         }
       }
-      /*
-      setTimeout(() => {
-        isCapture = startScreenCapture()
-        if (isCapture) {
-          updateGameScreenVideo()
-          setIsGameShow(true)
-        }
-      },6000)*/
-      /*
-      if (!isGameShow) {
-        setTimeout(() => {
-          isCapture = startScreenCapture()
-          if (isCapture) {
-            updateGameScreenVideo()
-            setIsGameShow(true)
-          }
-        },5000)
-        
-      } else {
-        stopScreenCapture()
-        stopGameScreenVideo()
-        setIsGameShow(false)
-      }*/
+    } else if (eventInfo === 'failed') {
+      message.destroy()
+      message.error('该应用程序未打开，请安装并打开该应用程序')
     }
     /*
     if (eventInfo === 'success') {
