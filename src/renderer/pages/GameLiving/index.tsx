@@ -876,47 +876,47 @@ const GameLivingPage : React.FC = () => {
         <div className={styles.optBtnWapper}>
           <div>
             <div className={styles.btnWapper}>
-              <button disabled={!startServer} id='dianzanBtn' onClick={handleOnOptBtnClick}>点赞</button>
+              <button  id='dianzanBtn' onClick={handleOnOptBtnClick}>点赞</button>
               <span>x</span>
-              <input disabled={!startServer} id='dianzan' onChange={(e) => handleOptmsgInputChange(e.target.id, e.target.value)} value={awardInfo.dianzan} />
+              <input  id='dianzan' onChange={(e) => handleOptmsgInputChange(e.target.id, e.target.value)} value={awardInfo.dianzan} />
             </div>
             <div className={styles.btnWapper}>
-              <button disabled={!startServer} id='gift4Btn' onClick={handleOnOptBtnClick}>礼物4</button>
+              <button  id='gift4Btn' onClick={handleOnOptBtnClick}>礼物4</button>
               <span>x</span>
-              <input disabled={!startServer} id='gift4' onChange={(e) => handleOptmsgInputChange(e.target.id, e.target.value)} value={awardInfo.gift4} />
+              <input  id='gift4' onChange={(e) => handleOptmsgInputChange(e.target.id, e.target.value)} value={awardInfo.gift4} />
             </div>
             <div className={styles.btnWapper}>
-              <button disabled={!startServer} id='gift5Btn' onClick={handleOnOptBtnClick}>礼物5</button>
+              <button  id='gift5Btn' onClick={handleOnOptBtnClick}>礼物5</button>
               <span>x</span>
-              <input disabled={!startServer} id='gift5' onChange={(e) => handleOptmsgInputChange(e.target.id, e.target.value)} value={awardInfo.gift5} />
+              <input  id='gift5' onChange={(e) => handleOptmsgInputChange(e.target.id, e.target.value)} value={awardInfo.gift5} />
             </div>
             <div className={styles.btnWapper}>
-              <button disabled={!startServer} id='gift6Btn' onClick={handleOnOptBtnClick}>礼物6</button>
+              <button  id='gift6Btn' onClick={handleOnOptBtnClick}>礼物6</button>
               <span>x</span>
-              <input disabled={!startServer} id='gift6' onChange={(e) => handleOptmsgInputChange(e.target.id, e.target.value)} value={awardInfo.gift6} />
+              <input  id='gift6' onChange={(e) => handleOptmsgInputChange(e.target.id, e.target.value)} value={awardInfo.gift6} />
             </div>
           </div>
           <div style={{display: 'flex', flexDirection:'column', flexWrap:'wrap'}}>
             <div className={styles.btnWapper}>
-              <button disabled={!startServer} id='roseBtn' onClick={handleOnOptBtnClick}>礼物1</button>
+              <button  id='roseBtn' onClick={handleOnOptBtnClick}>礼物1</button>
               <span>x</span>
-              <input disabled={!startServer} id='rose' onChange={(e) => handleOptmsgInputChange(e.target.id, e.target.value)} value={awardInfo.rose} />
+              <input  id='rose' onChange={(e) => handleOptmsgInputChange(e.target.id, e.target.value)} value={awardInfo.rose} />
             </div>
             <div className={styles.btnWapper}>
-              <button disabled={!startServer} id='bombBtn' onClick={handleOnOptBtnClick}>礼物2</button>
+              <button  id='bombBtn' onClick={handleOnOptBtnClick}>礼物2</button>
               <span>x</span>
-              <input disabled={!startServer} id='bomb' onChange={(e) => handleOptmsgInputChange(e.target.id, e.target.value)} value={awardInfo.bomb} />
+              <input  id='bomb' onChange={(e) => handleOptmsgInputChange(e.target.id, e.target.value)} value={awardInfo.bomb} />
             </div>
             <div className={styles.btnWapper}>
-              <button disabled={!startServer} id='rocketBtn' onClick={handleOnOptBtnClick}>礼物3</button>
+              <button  id='rocketBtn' onClick={handleOnOptBtnClick}>礼物3</button>
               <span>x</span>
-              <input disabled={!startServer} id='rocket' onChange={(e) => handleOptmsgInputChange(e.target.id, e.target.value)} value={awardInfo.rocket} />
+              <input  id='rocket' onChange={(e) => handleOptmsgInputChange(e.target.id, e.target.value)} value={awardInfo.rocket} />
             </div>
           </div>
         </div>
         <div className={styles.msgSend}>
-          <input disabled={!startServer} type="text" maxLength={200} onChange={handleInputMsgChange} placeholder='说点什么...' value={inputMsg}/>
-          <button disabled={!startServer} onClick={sendMsg}>发送</button>
+          <input  type="text" maxLength={200} onChange={handleInputMsgChange} placeholder='说点什么...' value={inputMsg}/>
+          <button  onClick={sendMsg}>发送</button>
         </div>
       </>
     )
