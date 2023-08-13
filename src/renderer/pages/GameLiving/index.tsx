@@ -92,6 +92,7 @@ const GameLivingPage : React.FC = () => {
   */
 
   const initRtm = async () => {
+    console.log('-------initRtm')
     try {
       RTM.current.init(appConfig.appId)
       registerRtmEvent()
@@ -135,6 +136,8 @@ const GameLivingPage : React.FC = () => {
   }
 
   const registerRtmEvent = () => {
+    //RTM.current.removeAllListeners()
+    //RTM.current.subscribeChannelEvents(appConfig.channelName)
     RTM.current.on('ChannelMessage', async ({ channelName, args }) => {
       const [message, memberId] = args
       console.log('channel: ', channelName, ', messsage: ', message.text, ', memberId: ', memberId)
@@ -144,6 +147,7 @@ const GameLivingPage : React.FC = () => {
       }]
       console.log('------new msgList:',newMsgList)
       setMsgList((prevMsgList) => {
+        console.log('prevMsgList: ', prevMsgList)
         return [
           ...prevMsgList,
           {

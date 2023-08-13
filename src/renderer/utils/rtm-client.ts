@@ -15,7 +15,7 @@ class RTMClient extends EventEmitter {
 
   init(appId: string) {
     this.client = AgoraRTM.createInstance(appId);
-    this.subscribeClientEvents();
+    //this.subscribeClientEvents();
   }
 
   // subscribe client events
