@@ -134,10 +134,14 @@ const GameLivingPage : React.FC = () => {
       setGlobalDisable(true)
     }
   }
-
-  const rtmMsgCb = async ({ channelName, args }) => {
-    const [message, memberId] = args
-      console.log('channel: ', channelName, ', messsage: ', message.text, ', memberId: ', memberId)
+  const rtmMsgCb = async (eventInfo) => {
+    console.log('----rtmcb evetnInfo: ', eventInfo)
+    if (eventInfo.eventName !== 'ChannelMessage') {
+      return
+    }
+    const [message, memberId] = eventInfo.args
+    
+      console.log('channel: ', eventInfo.channelName, ', messsage: ', message.text, ', memberId: ', memberId)
       let newMsgList = [{
         userName: +memberId,
         msg: message.text

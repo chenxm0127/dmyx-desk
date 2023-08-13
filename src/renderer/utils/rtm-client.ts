@@ -47,7 +47,7 @@ class RTMClient extends EventEmitter {
       this.channels[channelName].channel.on(eventName, (...args: any[]) => {
         console.log('emit ', eventName, args);
         //this.emit(eventName, { channelName, args: args });
-        this.cb(eventName, { channelName, args: args })
+        this.cb({eventName, channelName, args: args })
       });
     });
   }
