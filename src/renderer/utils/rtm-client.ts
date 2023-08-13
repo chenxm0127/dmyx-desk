@@ -5,16 +5,19 @@ class RTMClient extends EventEmitter {
   private client: RtmClient | null
   private channels: { [name: string]: { channel: RtmChannel, joined: boolean } }
   private accountName: string
+  private cb: any
 
   constructor() {
     super()
     this.channels = {}
     this.client = null
     this.accountName = ''
+    this.cb = null
   }
 
-  init(appId: string) {
+  init(appId: string, cb: any) {
     this.client = AgoraRTM.createInstance(appId);
+    this.cb = cb
     //this.subscribeClientEvents();
   }
 
@@ -43,7 +46,8 @@ class RTMClient extends EventEmitter {
     channelEvents.forEach((eventName) => {
       this.channels[channelName].channel.on(eventName, (...args: any[]) => {
         console.log('emit ', eventName, args);
-        this.emit(eventName, { channelName, args: args });
+        //this.emit(eventName, { channelName, args: args });
+        this.cb(eventName, { channelName, args: args })
       });
     });
   }

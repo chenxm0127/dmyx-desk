@@ -94,8 +94,8 @@ const GameLivingPage : React.FC = () => {
   const initRtm = async () => {
     console.log('-------initRtm')
     try {
-      RTM.current.init(appConfig.appId)
-      registerRtmEvent()
+      RTM.current.init(appConfig.appId, rtmMsgCb)
+      //registerRtmEvent()
       //await RTM.current.login(appConfig.userId.toString(), '')
     } catch(e) {
       console.error('init rtm failed. error: ',e)
@@ -133,6 +133,26 @@ const GameLivingPage : React.FC = () => {
     } else {
       setGlobalDisable(true)
     }
+  }
+
+  const rtmMsgCb = async ({ channelName, args }) => {
+    const [message, memberId] = args
+      console.log('channel: ', channelName, ', messsage: ', message.text, ', memberId: ', memberId)
+      let newMsgList = [{
+        userName: +memberId,
+        msg: message.text
+      }]
+      console.log('------new msgList:',newMsgList)
+      setMsgList((prevMsgList) => {
+        console.log('prevMsgList: ', prevMsgList)
+        return [
+          ...prevMsgList,
+          {
+            userName: +memberId,
+            msg: message.text
+          }
+        ]
+      })
   }
 
   const registerRtmEvent = () => {
